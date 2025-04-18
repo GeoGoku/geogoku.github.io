@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en">
   <head>
-  <script src="https://use.fontawesome.com/baff6f55f5.js"></script>
+    <script src="https://use.fontawesome.com/baff6f55f5.js"></script>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>GeoGoku@CUP - Research</title>
@@ -37,39 +37,39 @@
     
     <style>
       button.accordion {
-      font:14px/1.5 Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
-      cursor: pointer;
-      padding: 0px;
-      border: none;
-      text-align: left;
-      outline: none;
-      font-size: 100%;
-      transition: 0.3s;
-      background-color: #f8f8f8;
+        font:14px/1.5 Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
+        cursor: pointer;
+        padding: 0px;
+        border: none;
+        text-align: left;
+        outline: none;
+        font-size: 100%;
+        transition: 0.3s;
+        background-color: #f8f8f8;
       }
       button.accordion.active, button.accordion:hover {
-      background-color: #f8f8f8;
+        background-color: #f8f8f8;
       }
       button.accordion:after {
-      content: " [+] ";
-      font-size: 90%;
-      color:#777;
-      float: left;
-      margin-left: 1px;
+        content: " [+] ";
+        font-size: 90%;
+        color:#777;
+        float: left;
+        margin-left: 1px;
       }
 
       button.accordion.active:after {
-      content: " [\2212] ";
+        content: " [\2212] ";
       }
       div.panel {
-      padding: 0 20px;
-      margin-top: 5px;
-      display: none;
-      background-color: white;
-      font-size: 100%;
+        padding: 0 20px;
+        margin-top: 5px;
+        display: none;
+        background-color: white;
+        font-size: 100%;
       }
       div.panel.show {
-      display: block !important;
+        display: block !important;
       }
       .social-row {
         display: flex;
@@ -96,12 +96,94 @@
         margin-top: 10px;
         text-align: center;
       }
+
+      /* 成员列表容器（新增） */
+      .member-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px; /* 成员间间距 */
+        padding: 20px 0;
+      }
+
+      /* 单个成员卡片（修改后） */
+      .member-card {
+        width: calc(25% - 20px); /* 每行4人，如需3人改为 calc(33.33% - 20px) */
+        text-align: left; /* 内容左对齐 */
+        background-color: transparent; /* 去掉底色 */
+        box-shadow: none; /* 去掉阴影 */
+        padding: 0; /* 重置内边距 */
+        margin: 0; /* 重置外边距 */
+      }
+
+      .member-card img {
+        width: 100px; /* 缩小图片尺寸 */
+        height: 100px;
+        border-radius: 5px; /* 直角或小圆角 */
+        margin-bottom: 10px;
+      }
+
+      .member-card h4 {
+        font-size: 16px;
+        margin-bottom: 5px;
+      }
+
+      .member-card p, .member-card ul {
+        font-size: 14px;
+        line-height: 1.6;
+        margin: 0;
+      }
+
+      /* 研究方向和邮箱列表（修改后） */
+      .member-card ul {
+        list-style: none; /* 去掉列表符号 */
+        padding-left: 0;
+      }
+
+      .member-card ul li {
+        display: block; /* 改为块级元素左对齐 */
+        margin: 5px 0;
+        padding: 0; /* 去掉原有内边距 */
+        background-color: transparent; /* 去掉背景色 */
+      }
+
+      /* 响应式调整（可选） */
+      @media (max-width: 1024px) {
+        .member-card {
+          width: calc(33.33% - 20px); /* 小屏幕每行3人 */
+        }
+      }
+
+      @media (max-width: 768px) {
+        .member-card {
+          width: calc(50% - 20px); /* 手机端每行2人 */
+        }
+      }
     </style>
   </head>
   <body>
     <div class="wrapper">
       <header>
-        <!-- 不变的头部内容 -->
+        <h1>Tao Chen</h1>
+        <p>Assistant Professor of Geophysics<br>China University of Petroleum (Beijing)</p> <!-- 修正拼写错误 -->
+        <p>Research Affiliate<br><a href="https://www.cup.edu.cn/prplab">National Key Laboratory of Petroleum Resources and Engineering</a></p>
+        <h3><a href="https://geogoku.github.io/">Home</a></h3>
+        <h3><a href="https://geogoku.github.io/research.html">Research</a></h3>
+        <h3><a href="https://geogoku.github.io/research/CV.pdf">CV</a></h3>  
+        <h3><a href="https://geogoku.github.io/code.html">Code</a></h3> 
+        <h3><a href="https://geogoku.github.io/teaching.html">Teaching</a></h3> 
+        <h3><a href="https://geogoku.github.io/member.html">Member</a></h3>
+        <b>Social</b><br>
+        <div class="social-row">
+          <a href="mailto:chentao@cup.edu.cn" class="author-social" target="_blank"><i class="fa fa-fw fa-envelope-square"></i> Email</a><br>
+          <a href="https://orcid.org/0000-0001-7162-5145"><i class="ai ai-fw ai-orcid-square"></i> ORCID</a><br>
+          <a href="https://www.researchgate.net/profile/Tao-Chen-50"><i class="ai ai-fw ai-researchgate-square"></i> ResearchGate</a><br>
+          <a href="http://github.com/GeoGoku"><i class="fa fa-fw fa-github-square"></i> GitHub</a><br>
+          <br>
+        </div>
+        <br>
+
+        <p><b>Contact:</b><br>College of Geophysics<br>China University of Petroleum (Beijing)<br>18, Fuxue Road, Changping District, Beijing, China  102249</p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
       </header>
       <section>
 
@@ -173,14 +255,15 @@
     </div>
     <script src="javascripts/scale.fix.js"></script>
     <script> 
-    var acc = document.getElementsByClassName("accordion");
-    var i;
-    for (i = 0; i < acc.length; i++) {
+      var acc = document.getElementsByClassName("accordion");
+      var i;
+      for (i = 0; i < acc.length; i++) {
         acc[i].onclick = function(){
-            this.classList.toggle("active");
-            this.nextElementSibling.classList.toggle("show");
+          this.classList.toggle("active");
+          this.nextElementSibling.classList.toggle("show");
         }
-    }
+      }
     </script>
   </body>
 </html>
+    
