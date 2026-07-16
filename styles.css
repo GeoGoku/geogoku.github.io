@@ -294,3 +294,26 @@ img { display: block; max-width: 100%; }
   .contact-actions { flex-direction:column; }
   .contact-actions .button { width:100%; }
 }
+
+
+/* News & Activities: separated editorial sections */
+.updates-stack { display:grid; gap:28px; }
+.updates-block { background:#fff; border:1px solid var(--line); padding:clamp(26px, 4vw, 44px); box-shadow:0 14px 36px rgba(12,43,64,.055); }
+.updates-block-head { display:flex; align-items:flex-start; gap:18px; padding-bottom:22px; border-bottom:1px solid var(--line); }
+.updates-block-head .section-index { color:var(--gold); font:500 30px/1 Georgia, "Times New Roman", serif; }
+.updates-block-head .eyebrow { margin:0 0 4px; }
+.updates-block-head h3 { margin:0; color:var(--navy-deep); font:500 28px/1.2 Georgia, "Times New Roman", "Songti SC", serif; }
+.news-feature { display:grid; grid-template-columns:90px 1fr; gap:24px; align-items:start; margin-top:28px; padding:28px 30px; background:linear-gradient(135deg, #f4f8f8 0%, #fbfaf6 100%); border-left:4px solid var(--gold); }
+.news-feature time, .activity-item time { color:var(--teal); font-size:13px; font-weight:800; letter-spacing:.06em; }
+.news-badge { display:inline-block; margin-bottom:9px; color:#8a6420; background:#f3e7c9; padding:4px 9px; font-size:11px; font-weight:800; letter-spacing:.1em; text-transform:uppercase; }
+.news-feature h4 { margin:0 0 9px; color:var(--navy-deep); font-size:21px; line-height:1.45; }
+.news-feature p { margin:0; color:var(--muted); }
+.activity-list { display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); column-gap:42px; margin-top:12px; }
+.activity-item { display:grid; grid-template-columns:64px 1fr; gap:14px; padding:22px 0; border-bottom:1px solid var(--line); }
+.activity-item h4 { margin:0 0 4px; color:var(--navy-deep); font-size:18px; }
+.activity-item p { margin:0; color:var(--muted); font-size:14px; }
+@media (max-width: 720px) {
+  .news-feature { grid-template-columns:1fr; gap:10px; padding:22px; }
+  .activity-list { grid-template-columns:1fr; }
+  .activity-item { grid-template-columns:54px 1fr; }
+}
