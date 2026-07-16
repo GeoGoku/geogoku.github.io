@@ -1,131 +1,16 @@
 <!doctype html>
-<html lang="en">
-  <head>
-    <script src="https://use.fontawesome.com/baff6f55f5.js"></script>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>GeoGoku@CUP - Code</title>
+<html lang="zh-CN">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Code | Tao Chen</title><link rel="stylesheet" href="styles.css"></head>
+<body>
+  <nav class="site-nav" aria-label="涓诲鑸?><div class="nav-inner"><a class="brand" href="index.html">TAO CHEN <small>GEOGOKU</small></a><button class="menu-toggle" aria-label="鎵撳紑瀵艰埅" aria-expanded="false">鈽?/button><div class="nav-links"><a href="index.html">Home</a><a href="research.html">Research</a><a href="https://geogoku.github.io/research/CV.pdf">CV</a><a class="active" href="code.html">Code</a><a href="teaching.html">Teaching</a><a href="member.html">Members</a><a class="nav-cta" href="index.html#join">Join Us</a></div></div></nav>
+  <header class="page-hero"><div class="page-hero-inner"><p class="eyebrow">Open science</p><h1>Code & Data</h1><p>浠ｇ爜鍜屾暟鎹瓨鍌ㄤ粨搴撯€斺€旂敤浜庡湴鐞冪墿鐞嗘婕斻€佹暟鎹鐞嗕笌瑙ｉ噴鐨勫紑鏀剧爺绌跺伐鍏枫€?/p></div></header>
+  <main class="section"><div class="container content-grid"><div class="prose"><p class="kicker">Publicly available code</p><h2>Matlab</h2><div class="repo-list">
+    <a class="repo" href="https://github.com/GeoGoku/GravForModeling3D"><div><h3>Grav3DFwd</h3><p>A Matlab program for 3D forward modeling of gravity anomalies with cell mergence and parallel computing.</p></div><span class="language">MATLAB</span></a>
+    <a class="repo" href="https://github.com/GeoGoku/EdgeEnhancement"><div><h3>EdgeEnhancement</h3><p>Normalized Harris Filter for edge enhancement of potential field data.</p></div><span class="language">MATLAB</span></a>
+    <a class="repo" href="https://github.com/GeoGoku/Interpolation"><div><h3>Interpolation</h3><p>A Taylor series-based interpolator for potential field data.</p></div><span class="language">MATLAB</span></a>
+  </div><h2 style="margin-top:55px">Python</h2><div class="repo-list"><a class="repo" href="https://github.com/GeoGoku/Res1DFwd"><div><h3>Res1DFwd</h3><p>Forward modeling of electrical potential for layered earth model.</p></div><span class="language">PYTHON</span></a></div>
+  <h2 style="margin-top:70px">Publicly available data</h2><div class="repo-list"><div class="repo"><div><h3>Gravity data</h3><p>Public gravity datasets and related resources.</p></div></div><div class="repo"><div><h3>Magnetic data</h3><p>Public magnetic datasets and related resources.</p></div></div><div class="repo"><div><h3>Electric and Electromagnetic data</h3><p>Public electric and electromagnetic datasets.</p></div></div><div class="repo"><div><h3>Seismic data</h3><p>Public seismic datasets and related resources.</p></div></div></div></div>
+  <aside class="side-note"><h3>GeoGoku on GitHub</h3><p>璁块棶 GitHub 涓婚〉鑾峰彇鏈€鏂颁唬鐮併€佽鏄庢枃妗ｅ拰鏇存柊璁板綍銆?/p><a class="text-link" href="https://github.com/GeoGoku">View all repositories 鈫?/a></aside></div></main>
+  <footer class="site-footer"><div class="footer-grid"><div><h2>GeoGoku Research Group</h2><p>College of Geophysics<br>China University of Petroleum (Beijing)</p></div><div><h3>Contact</h3><p><a href="mailto:chentao@cup.edu.cn">chentao@cup.edu.cn</a></p></div><div><h3>Connect</h3><p><a href="https://github.com/GeoGoku">GitHub</a> 路 <a href="https://orcid.org/0000-0001-7162-5145">ORCID</a></p></div></div><div class="copyright">漏 Tao Chen 路 Hosted on GitHub Pages</div></footer><script src="app.js"></script>
+</body></html>
 
-    <link rel="stylesheet" href="stylesheets/styles.css">
-    <link rel="stylesheet" href="stylesheets/github-light.css">
-    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=yes">
-    <!--[if lt IE 9]>
-    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
-
-    <script>
-      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-      })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
-
-      ga('create', 'UA-29643011-3', 'auto');
-      ga('send', 'pageview');
-    </script>
-
-    <!-- New GA4 tracking code, see https://support.google.com/analytics/answer/10271001#analyticsjs-enable-basic --> 
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-GNJD50R0Z7"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'G-GNJD50R0Z7');
-    </script>
-
-    <!-- For all browsers -->
-    <link rel="stylesheet" href="assets/css/academicons.min.css"/>
-    <link rel="stylesheet" href="assets/css/academicons.css"/>
-
-    <style>
-      button.accordion {
-        font:14px/1.5 Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
-        cursor: pointer;
-        padding: 0px;
-        border: none;
-        text-align: left;
-        outline: none;
-        font-size: 100%;
-        transition: 0.3s;
-        background-color: #f8f8f8;
-      }
-      button.accordion.active, button.accordion:hover {
-        background-color: #f8f8f8;
-      }
-      button.accordion:after {
-        content: " [+] ";
-        font-size: 90%;
-        color:#777;
-        float: left;
-        margin-left: 1px;
-      }
-
-      button.accordion.active:after {
-        content: " [\2212] ";
-      }
-      div.panel {
-        padding: 0 20px;
-        margin-top: 5px;
-        display: none;
-        background-color: white;
-        font-size: 100%;
-      }
-      div.panel.show {
-        display: block !important;
-      }
-      .social-row {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: space-between;
-      }
-    </style>
-  </head>
-  <body>
-    <div class="wrapper">
-      <header>
-        <h1>Tao Chen</h1>
-        <p>Assistant Professor of Geophysics<br>China University of Petroleum (Beijing)</p>
-        <p>Research Affiliate<br><a href="https://www.cup.edu.cn/prplab/">National Key Laboratory of Petroleum Resources and Engineering</a></p>
-        <h3><a href="https://geogoku.github.io/">Home</a></h3>
-        <h3><a href="https://geogoku.github.io/research.html">Research</a></h3>
-        <h3><a href="https://geogoku.github.io/research/CV.pdf">CV</a></h3>  
-        <h3><a href="https://geogoku.github.io/code.html">Code</a></h3> 
-        <h3><a href="https://geogoku.github.io/teaching.html">Teaching</a></h3> 
-        <h3><a href="https://geogoku.github.io/member.html">Member</a></h3>
-        <b>Social</b><br>
-        <div class="social-row">
-          <a href="mailto:chentao@cup.edu.cn" class="author-social" target="_blank"><i class="fa fa-fw fa-envelope-square"></i> Email</a><br>
-          <a href="https://orcid.org/0000-0001-7162-5145"><i class="ai ai-fw ai-orcid-square"></i> ORCID</a><br>
-          <a href="https://www.researchgate.net/profile/Tao-Chen-50"><i class="ai ai-fw ai-researchgate-square"></i> ResearchGate</a><br>
-          <a href="http://github.com/GeoGoku"><i class="fa fa-fw fa-github-square"></i> GitHub</a><br>
-          <br>
-        </div>
-        <br>
-
-        <p><b>Contact:</b><br>College of Geophysics<br>China University of Petroleum (Beijing)<br>18, Fuxue Road, Changping District, Beijing, China 102249</p>
-        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
-      </header>
-      <section>
-        <h2>代码和数据存储仓库</h2>
-        <hr />
-        <h3><a id="Public available code" class="anchor" href="#Public available code" aria-hidden="true"><span class="octicon octicon-link"></span></a>Public available code</h3>
-        <h4>Matlab</h4>
-        <ul>
-          <li><a href="https://github.com/GeoGoku/GravForModeling3D">Grav3DFwd</a>: A Matlab program to perform 3D forward modeling of Gravity anomalies with cell mergence and parallel computing.</li>
-          <li><a href="https://github.com/GeoGoku/EdgeEnhancement">EdgeEnhancement</a>: Normalized Harris Filter for edge enhancement of potential field data.</li>
-          <li><a href="https://github.com/GeoGoku/Interpolation">Interpolation</a>: A Taylor series-based interpolator for potential field data.</li>
-        </ul>
-        <h4>Python</h4>
-        <ul>
-          <li><a href="https://github.com/GeoGoku/Res1DFwd">Res1DFwd</a>: Forward modeling of electrical potential for layered earth model.</li>
-        </ul>
-        <hr>
-        <h3><a id="Publicly available data" class="anchor" href="#Publicly available data" aria-hidden="true"><span class="octicon octicon-link"></span></a>Publicly available data</h3>
-        <h4>Gravity data</h4>
-        <h4>Magnetic data</h4>
-        <h4>Electric and Electromagnetic  data</h4>
-        <h4>Seismic data</h4>
-      </section>
-    </div>
-    <script src="javascripts/scale.fix.js"></script>
-  </body>
-</html>    
