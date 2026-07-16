@@ -166,8 +166,8 @@ img { display: block; max-width: 100%; }
 .course:first-child { border-top:0; padding-top:0; }
 .course summary { cursor:pointer; list-style:none; display:grid; grid-template-columns:1fr auto; gap:20px; align-items:start; }
 .course summary::-webkit-details-marker { display:none; }
-.course summary::after { content:"锛?; color:var(--teal); font-size:24px; }
-.course[open] summary::after { content:"鈭?; }
+.course summary::after { content:"+"; color:var(--teal); font-size:24px; }
+.course[open] summary::after { content:"−"; }
 .course h3 { margin:0 0 7px; font-size:21px; }
 .course-meta { color:var(--teal); font-size:13px; font-weight:700; }
 .course-body { padding:18px 45px 5px 0; }
@@ -175,7 +175,7 @@ img { display: block; max-width: 100%; }
 .resource-links a { display:inline-block; border:1px solid var(--line); padding:6px 10px; font-size:13px; }
 
 .member-grid { display:grid; grid-template-columns:repeat(3, 1fr); gap:32px; }
-.member-card img { width:100%; aspect-ratio:1/1; object-fit:cover; background:var(--mist); }
+.member-card img { width:180px; height:220px; object-fit:cover; object-position:center 28%; background:var(--mist); border:1px solid var(--line); box-shadow:0 12px 30px rgba(12,43,64,.10); }
 .member-card h3 { margin:17px 0 3px; color:var(--navy-deep); font-size:20px; }
 .member-card .member-role { color:var(--teal); font-size:13px; font-weight:700; margin:0 0 8px; }
 .member-card p { margin:0; color:var(--muted); font-size:14px; }
@@ -222,4 +222,75 @@ img { display: block; max-width: 100%; }
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior:auto; }
   *, *::before, *::after { transition:none!important; }
+}
+
+/* Contact dialog and footer refinements */
+.site-footer {
+  position:relative;
+  overflow:hidden;
+  background:linear-gradient(135deg,#081f2f 0%,#0d3449 58%,#15535b 100%);
+  color:#d7e4e7;
+  padding:68px 28px 28px;
+  border-top:5px solid var(--gold);
+}
+.site-footer::before {
+  content:"";
+  position:absolute;
+  width:520px;
+  height:520px;
+  right:-220px;
+  top:-300px;
+  border:1px solid rgba(255,255,255,.12);
+  border-radius:50%;
+  box-shadow:0 0 0 70px rgba(255,255,255,.025),0 0 0 140px rgba(255,255,255,.018);
+}
+.footer-grid { position:relative; z-index:1; gap:24px; align-items:stretch; }
+.footer-grid > div {
+  min-height:170px;
+  padding:26px 28px;
+  background:rgba(255,255,255,.055);
+  border:1px solid rgba(255,255,255,.11);
+  border-radius:4px;
+}
+.site-footer h2 { font-size:30px; }
+.site-footer h3 { color:#e7c988; }
+.site-footer a { color:#bde5e2; text-decoration:underline; text-decoration-color:rgba(189,229,226,.35); text-underline-offset:4px; }
+.site-footer a:hover { color:white; }
+.copyright { position:relative; z-index:1; text-align:center; color:#9eb4bc; }
+
+.contact-dialog[hidden] { display:none; }
+.contact-dialog {
+  position:fixed;
+  inset:0;
+  z-index:200;
+  display:grid;
+  place-items:center;
+  padding:20px;
+}
+.contact-dialog-backdrop { position:absolute; inset:0; background:rgba(5,24,36,.66); backdrop-filter:blur(5px); }
+.contact-dialog-card {
+  position:relative;
+  width:min(500px,100%);
+  background:white;
+  padding:34px;
+  border-radius:6px;
+  box-shadow:0 28px 80px rgba(4,25,38,.35);
+}
+.contact-dialog-card h2 { margin:0 0 8px; color:var(--navy-deep); font:500 31px/1.2 Georgia,"Times New Roman","Songti SC",serif; }
+.contact-dialog-card p { margin:0 0 20px; color:var(--muted); }
+.contact-address { display:block; padding:13px 15px; margin:0 0 12px; background:var(--mist); color:var(--navy-deep); font-weight:700; word-break:break-all; }
+.contact-subject { font-size:13px; color:var(--muted); margin-bottom:20px; }
+.contact-actions { display:flex; flex-wrap:wrap; gap:10px; }
+.contact-actions .button { cursor:pointer; font-family:inherit; }
+.contact-copy { background:white; color:var(--navy); border-color:var(--line); }
+.contact-copy:hover { color:var(--navy); background:var(--mist); }
+.contact-close { position:absolute; right:16px; top:12px; border:0; background:none; color:var(--muted); font-size:28px; cursor:pointer; }
+.contact-status { min-height:22px; margin:13px 0 0!important; color:var(--teal)!important; font-size:13px; font-weight:700; }
+
+@media (max-width:650px) {
+  .member-card img { width:150px; height:185px; }
+  .footer-grid > div { min-height:auto; }
+  .contact-dialog-card { padding:30px 22px 24px; }
+  .contact-actions { flex-direction:column; }
+  .contact-actions .button { width:100%; }
 }
