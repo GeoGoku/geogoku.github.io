@@ -1,0 +1,56 @@
+.brand {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+  gap: 12px;
+  color: var(--navy-deep);
+  font-size: inherit;
+  font-weight: inherit;
+  letter-spacing: normal;
+  line-height: 1;
+}
+
+.brand:hover {
+  color: var(--navy-deep);
+}
+
+.brand-mark {
+  width: 44px;
+  height: 44px;
+  flex: 0 0 44px;
+  object-fit: contain;
+}
+
+.brand-copy {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 10px;
+}
+
+.brand-name {
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: .08em;
+  white-space: nowrap;
+}
+
+.brand small {
+  margin-left: 0;
+  font-weight: 700;
+}
+
+@media (max-width: 650px) {
+  .brand {
+    gap: 9px;
+  }
+
+  .brand-mark {
+    width: 40px;
+    height: 40px;
+    flex-basis: 40px;
+  }
+
+  .brand-name {
+    font-size: 16px;
+  }
+}
