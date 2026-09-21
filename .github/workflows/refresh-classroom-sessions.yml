@@ -1,0 +1,27 @@
+name: Refresh classroom sessions
+on:
+  schedule:
+    - cron: "*/10 * * * *"
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Pull live sessions
+        run: |
+          curl -sS --fail --max-time 20 "https://geogoku-classroom.classroom-response-local.workers.dev/api/sessions" -o classroom/sessions.json
+          echo >> classroom/sessions.json
+      - name: Commit if changed
+        run: |
+          git config user.name "classroom-bot"
+          git config user.email "classroom-bot@users.noreply.github.com"
+          git add classroom/sessions.json
+          if git diff --cached --quiet; then
+            echo "no change"
+          else
+            git commit -m "Refresh classroom sessions"
+            git push
+          fi
