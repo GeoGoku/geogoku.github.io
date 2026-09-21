@@ -30,7 +30,7 @@ async function api(url, body, withToken = false) {
   } catch(e) { if(e.name === 'AbortError' || e instanceof TypeError) throw new Error('连接中断，请检查网络后重试；答案以收到“已提交”为准。'); throw e; }
   finally { clearTimeout(timeout); }
 }
-function connection(ok, message='') { const el=$('#connection'); if(el) {el.textContent=ok?`已连接 · ${new Date(Date.now()+offset).toLocaleTimeString('zh-CN')} 已同步`:message;el.className=ok?'muted':'error';} }
+function connection(ok, message='') { const badge=$('#svc');if(badge)badge.textContent=ok?'课堂互动 · 已连通':'课堂互动 · 未连通'; const el=$('#connection'); if(el) {el.textContent=ok?`已连接 · ${new Date(Date.now()+offset).toLocaleTimeString('zh-CN')} 已同步`:message;el.className=ok?'muted':'error';} }
 function schedule(fn, delay = 2000) {
   clearTimeout(refreshTimer);
   refreshTimer = setTimeout(async()=>{if(!document.hidden&&!busy) await fn(); else schedule(fn,delay);},delay);
@@ -123,9 +123,11 @@ function updateTeacher(reset=false){
   tick();
 }
 
+let sessionPollPending=false,sessionListSignature=null;
 async function studentHome(){
+  sessionListSignature=null;
   clearTimeout(refreshTimer);sessionId=null;token=null;state=null;signature='';
-  app.innerHTML=`<section class="card"><p class="eyebrow">学生端</p><h1>加入课堂</h1><p>只需填一次信息，接下来逐题作答。</p><form id="join"><div class="field"><label for="session">选择课堂</label><select id="session" name="sessionId" required><option value="">正在查找课堂…</option></select></div><div class="field"><label for="name">姓名</label><input id="name" name="name" value="${esc(identity.name||'')}" autocomplete="name" maxlength="40" required></div><div class="field"><label for="studentId">学号</label><input id="studentId" name="studentId" value="${esc(identity.studentId||'')}" autocomplete="off" maxlength="40" required></div><button class="full" id="join-button">进入课堂</button></form><p id="connection" class="muted"></p><p class="info">请核对班级。作答时间结束后不能补交；每题提交后不能修改。</p></section><p class="muted">题目请看老师的 PPT，此处只需选择答案。</p>`;
+  app.innerHTML=`<section class="card"><p class="eyebrow">学生端</p><h1>加入课堂</h1><p>只需填一次信息，接下来逐题作答。</p><form id="join"><div class="field"><label for="session">选择课堂</label><select id="session" name="sessionId" required disabled><option value="">正在查找课堂…</option></select></div><div class="field"><label for="name">姓名</label><input id="name" name="name" value="${esc(identity.name||'')}" autocomplete="name" maxlength="40" required></div><div class="field"><label for="studentId">学号</label><input id="studentId" name="studentId" value="${esc(identity.studentId||'')}" autocomplete="off" maxlength="40" required></div><button class="full" id="join-button" disabled>进入课堂</button></form><p id="connection" class="muted" role="status" aria-live="polite">正在连接答题服务…</p><button type="button" class="secondary full" id="retry-sessions" hidden>重新查找课堂</button><p id="session-help" class="info" hidden>页面已打开，但课堂列表获取失败。可尝试在手机浏览器中打开，或切换 Wi-Fi 后重试；不要求与老师连接同一个 Wi-Fi。未连接成功前无法提交答案。</p><p class="info">请核对班级。作答时间结束后不能补交；每题提交后不能修改。</p></section><p class="muted">题目请看老师的 PPT，此处只需选择答案。</p>`;
   $('#join').onsubmit=startAction(async e=>{
     const b=Object.fromEntries(new FormData(e.currentTarget));
     if(!b.sessionId)throw new Error('请等待老师创建课堂。');
@@ -137,18 +139,46 @@ async function studentHome(){
     storage.set('classroom.current',result.sessionId);
     await enterStudent(result);
   });
+  $('#retry-sessions').onclick=()=>pollSessions();
   await pollSessions();
 }
 async function pollSessions(){
-  if(sessionId||teacher)return;
+  if(sessionId||teacher||sessionPollPending||!$('#session'))return;
+  clearTimeout(refreshTimer);
+  sessionPollPending=true;
+  let delay=15000;
+  const retry=$('#retry-sessions');
+  if(retry)retry.disabled=true;
   try{
     const data=await api('/api/sessions');
-    const el=$('#session');if(!el)return;const old=el.value;
-    const markup=data.sessions.map(s=>`<option value="${s.id}">${esc(s.className)} · ${esc(s.course)} · ${time(s.created)}</option>`).join('')||'<option value="">暂无课堂，请等老师开启</option>';
-    if(el.innerHTML!==markup){el.innerHTML=markup;if(data.sessions.some(s=>String(s.id)===old))el.value=old;}
-    $('#join-button').disabled=!data.sessions.length;connection(true);
-  }catch(e){connection(false,e.message);}
-  schedule(pollSessions,2000);
+    const el=$('#session');if(!el||sessionId)return;
+    const old=el.value;
+    const nextSignature=JSON.stringify(data.sessions.map(s=>[s.id,s.className,s.course,s.created]));
+    if(nextSignature!==sessionListSignature){
+      el.innerHTML=data.sessions.map(s=>`<option value="${s.id}">${esc(s.className)} · ${esc(s.course)} · ${time(s.created)}</option>`).join('')||'<option value="">暂无进行中的课堂，请等老师开启</option>';
+      if(data.sessions.some(s=>String(s.id)===old))el.value=old;
+      sessionListSignature=nextSignature;
+    }
+    el.disabled=!data.sessions.length;
+    $('#join-button').disabled=!data.sessions.length;
+    $('#session-help').hidden=true;
+    retry.hidden=false;
+    connection(true);
+    if(!data.sessions.length)$('#connection').textContent='已连接答题服务，目前没有进行中的课堂。';
+  }catch(e){
+    delay=30000;
+    const el=$('#session');if(!el||sessionId)return;
+    if(sessionListSignature===null)el.innerHTML='<option value="">连接失败，暂时无法获取课堂</option>';
+    el.disabled=true;
+    $('#join-button').disabled=true;
+    $('#session-help').hidden=false;
+    retry.hidden=false;
+    connection(false,'课堂列表获取失败。'+e.message+' 将在 30 秒后重试，也可点击下方按钮。');
+  }finally{
+    sessionPollPending=false;
+    if(retry?.isConnected)retry.disabled=false;
+    if(!sessionId&&!teacher&&$('#session'))schedule(pollSessions,delay);
+  }
 }
 async function enterStudent(member){
   clearTimeout(refreshTimer);sessionId=member.sessionId;token=member.token;signature='';
