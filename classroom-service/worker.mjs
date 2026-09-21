@@ -10,13 +10,7 @@ function allowedOrigins(env){
   return [...new Set(list)];
 }
 function originOk(origin,env){
-  if(!origin)return false;
-  if(allowedOrigins(env).includes(origin))return true;
-  try{
-    const u=new URL(origin);
-    if(['localhost','127.0.0.1'].includes(u.hostname))return true;
-  }catch{}
-  return false;
+  return true;
 }
 function database(env){
   if(!env.DB)return null;
@@ -27,18 +21,16 @@ export default {async fetch(req,env){
   const origin=req.headers.get('Origin');
   const allow=originOk(origin,env);
   const headers={'Cache-Control':'no-store','X-Content-Type-Options':'nosniff','Vary':'Origin','Access-Control-Allow-Methods':'GET, POST, OPTIONS','Access-Control-Allow-Headers':'Content-Type, Authorization','Access-Control-Max-Age':'3600'};
-  if(allow)headers['Access-Control-Allow-Origin']=origin;
+  headers['Access-Control-Allow-Origin']=origin||'*';
   const send=(v,status=200,type='application/json; charset=utf-8',extra={})=>new Response(type.startsWith('application/json')?JSON.stringify(v):v,{status,headers:{...headers,'Content-Type':type,...extra}});
   try{
-    if(origin&&!allow)fail('访问来源不受支持。',403);
     if(req.method==='OPTIONS')return new Response(null,{status:204,headers});
     const contentType=req.headers.get('Content-Type')||'';
     if(req.method!=='GET'&&req.method!=='HEAD'&&req.method!=='OPTIONS'){
-      if(origin&&!allow)fail('请从课堂网页提交。',403);
       if(!contentType.toLowerCase().startsWith('application/json'))fail('请从课堂网页提交。',403);
     }
     const u=new URL(req.url),p=u.pathname,token=req.headers.get('Authorization')?.replace(/^Bearer /,'');
-    if(p==='/api/health'&&req.method==='GET')return send({ok:true,version:2,serverNow:Date.now()});
+    if(p==='/api/health'&&req.method==='GET')return send({ok:true,version:3,serverNow:Date.now()});
     const db=database(env);
     if(!db)fail('课堂服务尚未完成配置。',503);
     if(p==='/api/teacher/login'&&req.method==='POST'){
@@ -50,7 +42,8 @@ export default {async fetch(req,env){
     if(p.startsWith('/api/teacher/')&&!await verifyTeacher(token,env.TEACHER_SECRET))fail('请先登录老师端。',401);
     const store=makeStore(db);
     if(req.method==='GET'&&p==='/api/sessions')return send({sessions:await store.list(),serverNow:Date.now()});
-    if(req.method==='GET'&&p==='/api/teacher/sessions')return send({sessions:await store.list(true),addresses:[{name:'固定学生入口',address:'公网扫码即可',url:env.STUDENT_URL||'https://geogoku.github.io/classroom/'}],serverNow:Date.now()});
+    if(req.method==='GET'&&p==='/api/sessions.js'){const cb=/^[A-Za-z_][A-Za-z0-9_]*$/.test(u.searchParams.get('cb')||'')?u.searchParams.get('cb'):'classroomSessions';return send(`${cb}(${JSON.stringify({sessions:await store.list(),serverNow:Date.now()})})`,200,'application/javascript; charset=utf-8');}
+    if(req.method==='GET'&&p==='/api/teacher/sessions')return send({sessions:await store.list(true),addresses:[{name:'固定学生入口',address:'公网扫码即可',url:env.STUDENT_URL||'https://geogoku.github.io/classroom/go.html'}],serverNow:Date.now()});
     if(req.method==='POST'&&p==='/api/teacher/sessions')return send(await store.create(await body(req)));
     const route=p.match(/^\/api\/teacher\/sessions\/(\d+)(?:\/(\w+))?$/);
     if(route){const[,id,action]=route;
