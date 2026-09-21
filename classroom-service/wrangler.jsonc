@@ -1,0 +1,18 @@
+{
+  "name": "geogoku-classroom",
+  "main": "worker.mjs",
+  "compatibility_date": "2026-09-20",
+  "account_id": "a543488e6c21b2cbbe79e86c46da61b0",
+  "workers_dev": true,
+  "vars": {
+    "ALLOWED_ORIGIN": "https://geogoku.github.io",
+    "STUDENT_URL": "https://geogoku.github.io/classroom/"
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "geogoku-classroom",
+      "database_id": "12dcb3e8-7d51-4964-8458-cd99f068ad3e"
+    }
+  ]
+}
