@@ -19,7 +19,8 @@ function notify(message) {
   clearTimeout(noticeTimer); noticeTimer = setTimeout(()=>$('#notice').style.display='none',5000);
 }
 async function api(url, body, withToken = false) {
-  const controller = new AbortController(), timeout = setTimeout(()=>controller.abort(),7000);
+  if(!API_BASE) throw new Error('未配置课堂服务地址。');
+  const controller = new AbortController(), timeout = setTimeout(()=>controller.abort(),12000);
   try {
     const response = await fetch(API_BASE+url,{method:body === undefined ? 'GET' : 'POST',cache:'no-store',signal:controller.signal,headers:{...(body === undefined ? {} : {'Content-Type':'application/json'}),...((withToken ? token : teacherAuth) ? {Authorization:`Bearer ${withToken?token:teacherAuth}`} : {})},body:body === undefined ? undefined : JSON.stringify(body)});
     const data = await response.json();
@@ -29,8 +30,8 @@ async function api(url, body, withToken = false) {
   } catch(e) { if(e.name === 'AbortError' || e instanceof TypeError) throw new Error('连接中断，请检查网络后重试；答案以收到“已提交”为准。'); throw e; }
   finally { clearTimeout(timeout); }
 }
-function connection(ok, message='') { const el=$('#connection'); if(el) {el.textContent=ok?'已连接 · 页面自动更新':message;el.className=ok?'muted':'error';} }
-function schedule(fn, delay = 10000) {
+function connection(ok, message='') { const el=$('#connection'); if(el) {el.textContent=ok?`已连接 · ${new Date(Date.now()+offset).toLocaleTimeString('zh-CN')} 已同步`:message;el.className=ok?'muted':'error';} }
+function schedule(fn, delay = 2000) {
   clearTimeout(refreshTimer);
   refreshTimer = setTimeout(async()=>{if(!document.hidden&&!busy) await fn(); else schedule(fn,delay);},delay);
 }
@@ -70,6 +71,9 @@ async function enterTeacher(id, addresses, initial) {
   sessionId=Number(id); signature='';
   state=initial || await api(`/api/teacher/sessions/${id}`);
   history.replaceState(null,'',`${teacherURL.pathname}?session=${sessionId}`);
+  if(!Array.isArray(addresses)||!addresses.length){
+    addresses=[{name:'固定学生入口',address:'公网扫码即可',url:'https://geogoku.github.io/classroom/'}];
+  }
   const s=state.session;
   app.innerHTML=`<div class="row spread"><div><p class="eyebrow">${esc(s.course)} · ${time(s.created)}</p><h1>${esc(s.className)} <span class="pill" id="session-status"></span></h1></div><button class="secondary" id="home">返回课堂列表</button></div><div class="grid"><div><section class="card" id="controls"><div class="row spread"><h2>当前讲次</h2><span class="badge" id="lecture-badge"></span></div><form id="switch-lecture" class="row"><label for="next-lecture">第</label><input id="next-lecture" name="lecture" type="number" min="1" max="999" value="${s.lecture}" required style="width:90px"><span>讲</span><button class="secondary">切换讲次</button></form><p class="muted">开新 PPT 时切换；如有正在作答的题，将同时截止。已有记录全部保留。</p><hr class="rule"><form id="open-question"><div class="fields"><div class="field"><label for="number">本讲第几题</label><input id="number" name="number" type="number" min="1" max="999" value="1" required></div><div class="field"><label for="seconds">答题时间（秒）</label><input id="seconds" name="seconds" type="number" min="5" max="600" value="60" required></div></div><div class="row spread"><div class="row"><label for="options">选项</label><select id="options" name="options"><option value="ABC">A / B / C</option><option value="ABCD">A / B / C / D</option></select></div><button id="start-question">开始本题作答</button></div></form></section><section class="card"><div class="row spread"><h2>作答情况</h2><span id="joined" class="badge"></span></div><p id="connection" class="muted">已连接 · 页面自动更新</p><div id="live"></div></section><section class="card"><h2>本堂课的题目</h2><div id="history"></div></section><section class="card"><details><summary>已加入的学生 <span id="roster-count"></span></summary><div class="scroll" id="roster"></div></details></section></div><aside><section class="card qr"><h2>学生扫码进入</h2><p class="muted">本次切换讲次，无需重新扫码</p><label for="address" class="muted">学生使用手机流量或 Wi-Fi 均可</label><select class="full gap-top" id="address">${addresses.map(a=>`<option value="${esc(a.url)}">${esc(a.name)} · ${esc(a.address)}</option>`).join('') || '<option value="">未找到可用的局域网地址</option>'}</select><div id="qr"></div><a id="student-address" class="address" target="_blank"></a><a class="button secondary full" href="./" target="_blank">打开学生答题页</a><a class="button secondary full gap-top" id="download-qr">下载二维码</a><p class="muted">二维码长期不变。学生扫码后选择课堂，姓名和学号只需填一次。</p></section><section class="card"><h2>导出本堂课</h2><a class="button full" href="/api/teacher/sessions/${id}/export?wide=1">下载成绩汇总表</a><a class="button secondary full gap-top" href="/api/teacher/sessions/${id}/export">下载逐题明细</a><p class="muted">Excel 可直接打开。未作答标为“未答”；没有开过的题不计入。</p><hr class="rule"><button id="end" class="danger full">结束本次课堂</button></section></aside></div>`;
   $('#home').onclick=startAction(teacherHome);
@@ -93,7 +97,7 @@ async function teacherAction(action,body){state=await api(`/api/teacher/sessions
 async function pollTeacher(){
   if(!sessionId || !teacher)return;
   try{state=await api(`/api/teacher/sessions/${sessionId}`);updateTeacher();connection(true);}catch(e){connection(false,e.message);}
-  schedule(pollTeacher,5000);
+  schedule(pollTeacher,2000);
 }
 function bars(q){return Object.entries(q.counts).map(([c,n])=>`<div class="bar-row ${q.answerKey===c?'correct':''}"><strong>${c}</strong><div class="bar-track"><div class="bar-fill" style="width:${q.submitted?n/q.submitted*100:0}%"></div></div><span>${n} 人</span></div>`).join('');}
 function revealForm(q){return `<form data-reveal="${q.id}" class="row gap-top"><label for="key-${q.id}">正确答案</label><select id="key-${q.id}" name="answerKey">${[...q.options].map(c=>`<option ${q.answerKey===c?'selected':''}>${c}</option>`).join('')}</select><button class="secondary small">${q.revealed?'更新答案':'公布答案'}</button></form><p class="muted">${q.answerKey?`已公布：${q.answerKey}`:'可选：公布后学生页显示答案，导出表会自动标记对错。'}</p>`;}
@@ -144,7 +148,7 @@ async function pollSessions(){
     if(el.innerHTML!==markup){el.innerHTML=markup;if(data.sessions.some(s=>String(s.id)===old))el.value=old;}
     $('#join-button').disabled=!data.sessions.length;connection(true);
   }catch(e){connection(false,e.message);}
-  schedule(pollSessions,15000);
+  schedule(pollSessions,2000);
 }
 async function enterStudent(member){
   clearTimeout(refreshTimer);sessionId=member.sessionId;token=member.token;signature='';
