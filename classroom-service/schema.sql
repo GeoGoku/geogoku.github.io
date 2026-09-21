@@ -16,5 +16,5 @@ CREATE TRIGGER IF NOT EXISTS check_participant BEFORE INSERT ON participants BEG
  SELECT CASE WHEN NOT EXISTS(SELECT 1 FROM sessions WHERE id=NEW.sessionId AND ended IS NULL) THEN RAISE(ABORT,'SESSION_ENDED') END;
 END;
 CREATE TRIGGER IF NOT EXISTS check_answer BEFORE INSERT ON answers BEGIN
- SELECT CASE WHEN NOT EXISTS(SELECT 1 FROM questions q JOIN sessions s ON s.id=q.sessionId JOIN participants p ON p.sessionId=s.id WHERE q.id=NEW.questionId AND p.id=NEW.participantId AND s.ended IS NULL AND q.closed IS NULL AND q.deadline>CAST((julianday('now')-2440587.5)*86400000 AS INTEGER) AND length(NEW.choice)=1 AND instr(q.options,NEW.choice)>0) THEN RAISE(ABORT,'ANSWER_CLOSED') END;
+ SELECT CASE WHEN NOT EXISTS(SELECT 1 FROM questions q JOIN sessions s ON s.id=q.sessionId JOIN participants p ON p.sessionId=s.id WHERE q.id=NEW.questionId AND p.id=NEW.participantId AND s.ended IS NULL AND q.closed IS NULL AND length(NEW.choice)=1 AND instr(q.options,NEW.choice)>0) THEN RAISE(ABORT,'ANSWER_CLOSED') END;
 END;

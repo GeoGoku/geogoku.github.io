@@ -20,7 +20,8 @@ export function makeStore(db){
       stmt('SELECT * FROM questions WHERE sessionId=? ORDER BY id',s.id),
       stmt('SELECT a.*,p.name,p.studentId FROM answers a JOIN participants p ON p.id=a.participantId WHERE p.sessionId=? ORDER BY submitted',s.id)
     ]);
-    const [students,questions,answers]=result.map(r=>r.results);
+    const rows=r=>Array.isArray(r?.results)?r.results:Array.isArray(r)?r:[];
+    const [students,questions,answers]=result.map(rows);
     return {session:s,students,questions:questions.map(q=>{const qa=answers.filter(a=>a.questionId===q.id),counts=Object.fromEntries([...q.options].map(c=>[c,0]));for(const a of qa)counts[a.choice]++;return {...q,open:open(q),counts,answers:qa,submitted:qa.length};}),serverNow:Date.now()};
   }
   return {
@@ -46,7 +47,9 @@ export function makeStore(db){
       const existing=()=>get('SELECT choice,submitted FROM answers WHERE questionId=? AND participantId=?',qid,p.id);
       const old=await existing();if(old)return {...old,repeated:true};
       if(typeof b.choice!=='string'||b.choice.length!==1||!q.options.includes(b.choice))fail('请选择有效选项。');
-      try{await run("INSERT INTO answers(questionId,participantId,choice,submitted) VALUES(?,?,?,CAST((julianday('now')-2440587.5)*86400000 AS INTEGER))",qid,p.id,b.choice);}catch(e){const saved=await existing();if(saved)return {...saved,repeated:true};if(String(e).includes('ANSWER_CLOSED'))fail('本题已截止，不能补交。',409);throw e;}
+      if(q.closed!==null||q.deadline<=Date.now())fail('本题已截止，不能补交。',409);
+      const submitted=Date.now();
+      try{await run('INSERT INTO answers(questionId,participantId,choice,submitted) VALUES(?,?,?,?)',qid,p.id,b.choice,submitted);}catch(e){const saved=await existing();if(saved)return {...saved,repeated:true};if(String(e).includes('ANSWER_CLOSED'))fail('本题已截止，不能补交。',409);throw e;}
       return existing();
     },
     async export(id,wide=false){
