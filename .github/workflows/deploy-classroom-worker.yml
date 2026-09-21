@@ -1,0 +1,31 @@
+name: Deploy classroom worker
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'classroom-service/**'
+      - '.github/workflows/deploy-classroom-worker.yml'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: classroom-service
+    steps:
+      - uses: actions/checkout@v4
+      - uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: a543488e6c21b2cbbe79e86c46da61b0
+          workingDirectory: classroom-service
+          command: deploy
+      - uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: a543488e6c21b2cbbe79e86c46da61b0
+          workingDirectory: classroom-service
+          command: d1 execute geogoku-classroom --remote --file=migrate-triggers.sql
+        continue-on-error: true
