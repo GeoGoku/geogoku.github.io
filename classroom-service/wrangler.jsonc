@@ -12,7 +12,8 @@
     {
       "binding": "DB",
       "database_name": "geogoku-classroom",
-      "database_id": "12dcb3e8-7d51-4964-8458-cd99f068ad3e"
+      "database_id": "12dcb3e8-7d51-4964-8458-cd99f068ad3e",
+      "remote": true
     }
   ]
 }

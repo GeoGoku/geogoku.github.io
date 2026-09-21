@@ -5,28 +5,52 @@ async function signature(payload,secret){const key=await crypto.subtle.importKey
 async function teacherToken(secret){const payload=btoa(JSON.stringify({expires:Date.now()+12*3600_000,nonce:randomToken()}));return payload+'.'+await signature(payload,secret);}
 async function verifyTeacher(token,secret){if(!secret||!token||token.length>1000)return false;try{const [payload,sig]=token.split('.');if(!equal(sig,await signature(payload,secret)))return false;return JSON.parse(atob(payload)).expires>Date.now();}catch{return false;}}
 async function body(req){const raw=await req.text();if(raw.length>8192)fail('提交内容过长。',413);try{const v=JSON.parse(raw);if(!v||typeof v!=='object'||Array.isArray(v))fail('请求格式不正确。');return v;}catch{fail('请求格式不正确。');}}
+function allowedOrigins(env){
+  const list=[env.ALLOWED_ORIGIN||'https://geogoku.github.io',...String(env.ALLOWED_ORIGINS||'').split(',')].map(s=>s.trim()).filter(Boolean);
+  return [...new Set(list)];
+}
+function originOk(origin,env){
+  if(!origin)return false;
+  if(allowedOrigins(env).includes(origin))return true;
+  try{
+    const u=new URL(origin);
+    if(['localhost','127.0.0.1'].includes(u.hostname))return true;
+  }catch{}
+  return false;
+}
+function database(env){
+  if(!env.DB)return null;
+  try{if(typeof env.DB.withSession==='function')return env.DB.withSession('first-primary');}catch{}
+  return env.DB;
+}
 export default {async fetch(req,env){
-  const origin=req.headers.get('Origin'),allowed=env.ALLOWED_ORIGIN||'https://geogoku.github.io';
+  const origin=req.headers.get('Origin');
+  const allow=originOk(origin,env);
   const headers={'Cache-Control':'no-store','X-Content-Type-Options':'nosniff','Vary':'Origin','Access-Control-Allow-Methods':'GET, POST, OPTIONS','Access-Control-Allow-Headers':'Content-Type, Authorization','Access-Control-Max-Age':'3600'};
-  if(origin===allowed)headers['Access-Control-Allow-Origin']=allowed;
+  if(allow)headers['Access-Control-Allow-Origin']=origin;
   const send=(v,status=200,type='application/json; charset=utf-8',extra={})=>new Response(type.startsWith('application/json')?JSON.stringify(v):v,{status,headers:{...headers,'Content-Type':type,...extra}});
   try{
-    if(origin&&origin!==allowed)fail('访问来源不受支持。',403);
+    if(origin&&!allow)fail('访问来源不受支持。',403);
     if(req.method==='OPTIONS')return new Response(null,{status:204,headers});
-    if(req.method!=='GET'&&(origin!==allowed||!req.headers.get('Content-Type')?.startsWith('application/json')))fail('请从课堂网页提交。',403);
+    const contentType=req.headers.get('Content-Type')||'';
+    if(req.method!=='GET'&&req.method!=='HEAD'&&req.method!=='OPTIONS'){
+      if(origin&&!allow)fail('请从课堂网页提交。',403);
+      if(!contentType.toLowerCase().startsWith('application/json'))fail('请从课堂网页提交。',403);
+    }
     const u=new URL(req.url),p=u.pathname,token=req.headers.get('Authorization')?.replace(/^Bearer /,'');
-    if(p==='/api/health'&&req.method==='GET')return send({ok:true,version:1});
-    if(!env.DB)fail('课堂服务尚未完成配置。',503);
+    if(p==='/api/health'&&req.method==='GET')return send({ok:true,version:2,serverNow:Date.now()});
+    const db=database(env);
+    if(!db)fail('课堂服务尚未完成配置。',503);
     if(p==='/api/teacher/login'&&req.method==='POST'){
       if(!env.TEACHER_SECRET)fail('老师登录尚未完成配置。',503);
       const b=await body(req);
       if(typeof b.password!=='string'||!equal(await hash(b.password),await hash(env.TEACHER_SECRET)))fail('老师口令不正确。',401);
-      return send({token:await teacherToken(env.TEACHER_SECRET),expiresIn:43200});
+      return send({token:await teacherToken(env.TEACHER_SECRET),expiresIn:43200,serverNow:Date.now()});
     }
     if(p.startsWith('/api/teacher/')&&!await verifyTeacher(token,env.TEACHER_SECRET))fail('请先登录老师端。',401);
-    const store=makeStore(env.DB);
+    const store=makeStore(db);
     if(req.method==='GET'&&p==='/api/sessions')return send({sessions:await store.list(),serverNow:Date.now()});
-    if(req.method==='GET'&&p==='/api/teacher/sessions')return send({sessions:await store.list(true),addresses:[{name:'固定学生入口',address:'无需同一 Wi-Fi',url:env.STUDENT_URL||'https://geogoku.github.io/classroom/'}],serverNow:Date.now()});
+    if(req.method==='GET'&&p==='/api/teacher/sessions')return send({sessions:await store.list(true),addresses:[{name:'固定学生入口',address:'公网扫码即可',url:env.STUDENT_URL||'https://geogoku.github.io/classroom/'}],serverNow:Date.now()});
     if(req.method==='POST'&&p==='/api/teacher/sessions')return send(await store.create(await body(req)));
     const route=p.match(/^\/api\/teacher\/sessions\/(\d+)(?:\/(\w+))?$/);
     if(route){const[,id,action]=route;
