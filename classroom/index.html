@@ -2,10 +2,18 @@
 <html lang="zh-CN"><head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<meta http-equiv="refresh" content="0;url=./go.html">
+<meta http-equiv="Cache-Control" content="no-store">
 <title>加入课堂</title>
-<script>location.replace('./go.html'+location.search+location.hash);</script>
+<script>
+(function(){
+  var q=location.search||'';
+  if(q.indexOf('v=')<0) q=q?(q+'&v=22c'):'?v=22c';
+  location.replace('./go.html'+q+location.hash);
+})();
+</script>
+<meta http-equiv="refresh" content="0;url=./go.html?v=22c">
 </head>
 <body>
-<p style="font-family:sans-serif;padding:24px"><a href="./go.html">进入课堂答题</a></p>
+<p style="font-family:sans-serif;padding:24px"><a href="./go.html?v=22c">进入课堂答题</a></p>
+<p style="font-family:sans-serif;padding:0 24px;color:#666">没有下拉菜单。请点班级卡片，或填写老师屏幕上的课堂编号。微信请点右上角「在浏览器打开」。</p>
 </body></html>
