@@ -1,0 +1,1 @@
+{"name":"classroom-api","version":"3.0.0","main":"index.js","private":true,"cloudfunction-config":{"memorySize":256,"timeout":20,"path":"/classroom-api"}}

@@ -1,7 +1,6 @@
 name: Refresh classroom sessions
 on:
-  schedule:
-    - cron: "*/10 * * * *"
+  # Legacy Cloudflare snapshot; scheduled refresh stopped after uniCloud migration.
   workflow_dispatch:
 permissions:
   contents: write
