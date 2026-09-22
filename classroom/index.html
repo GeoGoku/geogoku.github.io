@@ -46,23 +46,23 @@ button.ghost{background:#eaf0f7;color:#234568}
 <main id="app">
 <section class="card">
 <h1>加入课堂</h1>
-<p>填写课堂编号、姓名和学号。当前课堂编号是 <b>6</b>（地物23-1）。</p>
+<p>填写姓名和学号，连接成功后选择课堂。</p>
 <div id="list"><p>正在查找班级…</p></div>
 <form id="f">
 <label>课堂编号</label>
-<input id="manual" name="sessionId" inputmode="numeric" value="6" placeholder="老师屏幕上的数字，例如 6">
+<input id="manual" name="sessionId" inputmode="numeric" value="" placeholder="填写老师提供的课堂编号">
 <label>姓名</label>
 <input id="name" name="name" required maxlength="40" placeholder="姓名">
 <label>学号</label>
 <input id="stu" name="studentId" required maxlength="40" placeholder="学号">
 <button type="submit">进入课堂</button>
 </form>
-<p id="msg" class="tip">手机看不到班级时，直接填编号 6 即可。微信请点右上角「在浏览器打开」。</p>
+<p id="msg" class="tip">正在连接答题服务。若连接失败，即使手填课堂编号也无法提交。</p>
 <button type="button" class="ghost" id="retry">重新查找课堂</button>
-<p class="cdnfoot"><a target="_blank" href="http://www.freecdn.pw/?zzwz">本站由免费云加速（FreeCDN）提供网站加速和攻击防御服务</a></p>
+
 </section>
 </main>
-<script src="./config.js"></script>
-<script src="./go-c.js"></script>
+<script src="./config.js?v=20260922-network1"></script>
+<script src="./go-c.js?v=20260922-network1"></script>
 </body>
 </html>
