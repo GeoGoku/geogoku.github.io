@@ -44,21 +44,21 @@ button.ghost{background:#eaf0f7;color:#234568}
 <main id="app">
 <section class="card">
 <h1>加入课堂</h1>
-<p>填写课堂编号、姓名和学号。没有班级卡片时，用老师屏幕上的编号即可。</p>
+<p>填写课堂编号、姓名和学号。当前课堂编号是 <b>6</b>（地物23-1）。</p>
 <div id="list"><p>正在查找班级…</p></div>
 <form id="f">
 <label>课堂编号</label>
-<input id="manual" name="sessionId" inputmode="numeric" placeholder="老师屏幕上的数字">
+<input id="manual" name="sessionId" inputmode="numeric" value="6" placeholder="老师屏幕上的数字，例如 6">
 <label>姓名</label>
 <input id="name" name="name" required maxlength="40" placeholder="姓名">
 <label>学号</label>
 <input id="stu" name="studentId" required maxlength="40" placeholder="学号">
 <button type="submit">进入课堂</button>
 </form>
-<p id="msg" class="tip">若班级列表一直空白，直接填课堂编号也可以进入。</p>
+<p id="msg" class="tip">手机看不到班级时，直接填编号 6 即可。微信请点右上角「在浏览器打开」。</p>
 <button type="button" class="ghost" id="retry">重新查找课堂</button>
 </section>
 </main>
-<script src="./go-a.js?v=22d"></script>
+<script src="./go-a.js?v=22e"></script>
 </body>
 </html>
