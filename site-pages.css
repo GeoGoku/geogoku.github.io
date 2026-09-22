@@ -1,0 +1,39 @@
+/* Compact reference lists and member tables, scoped to the updated pages. */
+.visually-hidden { position:absolute; width:1px; height:1px; margin:-1px; overflow:hidden; clip-path:inset(50%); white-space:nowrap; }
+.classroom-entry .teacher-entry { display:flex; width:100%; justify-content:center; box-sizing:border-box; }
+.classroom-entry .student-qr { display:block; margin:24px 0 12px; }
+.classroom-entry .student-qr img { display:block; width:100%; height:auto; background:#fff; }
+.classroom-entry .entry-label { margin:24px 0 10px; text-align:center; font-weight:700; color:var(--navy-deep); }
+.classroom-entry .entry-address { text-align:center; overflow-wrap:anywhere; }
+.publication-nav { display:flex; flex-wrap:wrap; gap:10px 24px; padding:20px 0; margin-bottom:35px; border-block:1px solid var(--line); }
+.publication-nav a { font-weight:700; }
+.publication-section { margin-bottom:54px; scroll-margin-top:105px; }
+.publication-section h2, .members-section h2 { margin:0 0 20px; color:var(--navy-deep); font-size:27px; }
+.publication-section h2 small, .members-section h2 small { margin-left:12px; font-size:15px; font-weight:400; color:var(--muted); }
+.publication-table, .members-table { width:100%; border-collapse:collapse; text-align:left; }
+.publication-table th, .members-table th { padding:12px 16px; background:var(--mist); color:var(--navy); font-size:14px; border-bottom:2px solid var(--line); }
+.publication-table td, .members-table td { padding:20px 16px; border-bottom:1px solid var(--line); vertical-align:top; }
+.publication-table .pub-year { width:82px; color:var(--teal); font-weight:700; white-space:nowrap; }
+.publication-table .citation { line-height:1.85; overflow-wrap:anywhere; }
+.publication-table .pub-title { color:var(--navy-deep); text-decoration:underline; text-decoration-color:#c1d3d7; text-underline-offset:3px; }
+.publication-table .pub-title:hover { color:var(--teal); }
+.publication-table .pub-type { display:inline-block; margin-left:8px; color:var(--muted); font-size:12px; white-space:nowrap; }
+.publication-intro { color:var(--muted); margin:0 0 24px; }
+.members-section { margin-bottom:52px; }
+.members-table th:first-child { width:15%; }
+.members-table th:nth-child(2) { width:18%; }
+.members-table th:nth-child(3) { width:32%; }
+.members-table td:first-child { font-weight:700; color:var(--navy-deep); }
+.members-table a { overflow-wrap:anywhere; }
+.empty-members { padding:24px 16px; color:var(--muted); border-block:1px solid var(--line); background:#fafcfc; }
+@media(max-width:650px){
+  .publication-section h2 small, .members-section h2 small { display:block; margin:5px 0 0; }
+  .publication-table th, .publication-table td { padding:15px 8px; }
+  .publication-table .pub-year { width:53px; font-size:13px; }
+  .members-table thead { position:absolute; width:1px; height:1px; overflow:hidden; clip-path:inset(50%); }
+  .members-table, .members-table tbody, .members-table tr, .members-table td { display:block; width:100%; }
+  .members-table tr { padding:16px 0; border-bottom:1px solid var(--line); }
+  .members-table td { border:0; padding:5px 0; }
+  .members-table td::before { content:attr(data-label); display:inline-block; width:82px; color:var(--muted); font-weight:400; font-size:13px; }
+  .classroom-entry { max-width:335px; width:100%; }
+}

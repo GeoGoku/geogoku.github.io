@@ -39,7 +39,8 @@ const closeContact = () => {
   contactDialog.hidden = true;
   document.body.style.overflow = '';
 };
-const openContact = href => {
+const openContact = (href, name) => {
+  contactDialog.querySelector('#contact-title').textContent = name ? '联系' + name : '联系陈涛老师';
   const value = href.replace(/^mailto:/i, '');
   const parts = value.split('?');
   activeEmail = decodeURIComponent(parts[0]);
@@ -60,7 +61,7 @@ document.addEventListener('click', event => {
   const mailLink = event.target.closest('a[href^="mailto:"]');
   if (mailLink && !mailLink.closest('.contact-dialog')) {
     event.preventDefault();
-    openContact(mailLink.getAttribute('href'));
+    openContact(mailLink.getAttribute('href'), mailLink.dataset.contactName);
     return;
   }
   if (event.target.closest('[data-close-contact]')) closeContact();
@@ -85,3 +86,4 @@ contactDialog.querySelector('.contact-copy').addEventListener('click', async () 
 document.addEventListener('keydown', event => {
   if (event.key === 'Escape' && !contactDialog.hidden) closeContact();
 });
+
