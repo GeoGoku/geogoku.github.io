@@ -45,6 +45,7 @@ exports.main=async event=>{
       const [,id,action,wide]=route;
       if(method==='GET'&&!action)data=await service.teacherState(id);
       else if(method==='GET'&&action==='export')data={csv:await service.export(id,!!wide)};
+      else if(method==='POST'&&action==='delete')data=await service.removeSession(id);
       else if(method==='POST'&&['open','close','lecture','end','reveal'].includes(action))data=await service.control(id,action,body);
       else return result(404,{error:'请求地址不存在。'});
     }

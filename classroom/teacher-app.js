@@ -44,7 +44,7 @@ function startAction(fn) {
     try { await fn(event); } catch(e) { notify(e.message); } finally {busy=false;if(button?.isConnected)button.disabled=button.id==='end'&&!!state?.session?.ended;tick();}
   };
 }
-function time(t){return new Date(t).toLocaleString('zh-CN',{month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'});}
+function time(t){return new Date(t).toLocaleString('zh-CN',{year:'numeric',month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'});}
 function remaining(q){return Math.max(0,Math.ceil((q.deadline-Date.now()-offset)/1000));}
 function qLabel(q){return `${q.lecture}-${q.number}`;}
 function tick(){
@@ -60,7 +60,7 @@ async function teacherHome() {
   clearTimeout(refreshTimer); sessionId=null; state=null; signature='';
   history.replaceState(null,'',teacherURL.pathname);
   const data=await api('/api/teacher/sessions');
-  app.innerHTML=`<div class="row spread"><div><p class="eyebrow">老师端</p><h1>这一堂课，从这里开始</h1></div><a class="button secondary" href="./" target="_blank">打开学生答题页</a></div><div class="grid"><div><section class="card"><h2>新建课堂</h2><form id="create"><div class="fields"><div class="field"><label for="course">课程</label><select id="course" name="course" required>${['地磁与地电','重力与固体潮','重磁电数据处理与解释','科技论文英语写作'].map(course=>`<option value="${esc(course)}"${course === storage.get('classroom.course','重力与固体潮') ? ' selected' : ''}>${esc(course)}</option>`).join('')}</select></div><div class="field"><label for="className">班级</label><input id="className" name="className" placeholder="例如：地球物理 1 班" maxlength="80" required></div></div><div class="field"><label for="lecture">从第几讲开始</label><input id="lecture" name="lecture" type="number" value="3" min="1" max="999" required></div><button>创建并进入课堂</button></form></section><section class="card"><div class="row spread"><h2>课堂记录</h2><button class="secondary small" id="refresh-list">刷新列表</button></div>${data.sessions.length ? data.sessions.map(s=>`<div class="history-item"><div><strong>${esc(s.className)}</strong><p class="muted">${esc(s.course)} · ${time(s.created)} · ${s.ended?'已结束':'进行中'}</p></div><button class="secondary small" data-enter="${s.id}">${s.ended?'查看记录':'进入课堂'}</button></div>`).join(''):'<p>还没有课堂。填写课程、班级和讲次即可开始。</p>'}</section></div><aside><section class="card"><h2>按需同步，节省额度</h2><p>学生填姓名、学号后进入课堂。每讲预列 20 道题，听到开题后直接选项提交。等待期间不自动请求服务器。</p><p class="info">题目仍然展示在 PPT 中。这里负责收答案，时间一到服务器拒收。点击“收题并公布答案”，一次完成收题、公布和统计。</p></section><section class="card"><h2>使用固定二维码</h2><p>每次上课创建课堂，学生扫描同一个二维码，选择班级后逐题作答。</p><p class="muted">学生可以使用手机流量或 Wi-Fi，无需与你连接同一个网络。</p></section></aside></div>`;
+  app.innerHTML=`<div class="row spread"><div><p class="eyebrow">老师端</p><h1>这一堂课，从这里开始</h1></div><a class="button secondary" href="./" target="_blank">打开学生答题页</a></div><div class="grid"><div><section class="card"><h2>新建课堂</h2><form id="create"><div class="fields"><div class="field"><label for="course">课程</label><select id="course" name="course" required>${['地磁与地电','重力与固体潮','重磁电数据处理与解释','科技论文英语写作'].map(course=>`<option value="${esc(course)}"${course === storage.get('classroom.course','重力与固体潮') ? ' selected' : ''}>${esc(course)}</option>`).join('')}</select></div><div class="field"><label for="className">班级</label><input id="className" name="className" placeholder="例如：地球物理 1 班" maxlength="80" required></div></div><div class="field"><label for="lecture">从第几讲开始</label><input id="lecture" name="lecture" type="number" value="3" min="1" max="999" required></div><button>创建并进入课堂</button></form></section><section class="card"><div class="row spread"><h2>课堂记录</h2><button class="secondary small" id="refresh-list">刷新列表</button></div><p class="muted">已结束的课堂可以删除。删除前请先导出需要保留的成绩；删除后无法恢复。</p>${data.sessions.length ? data.sessions.map(s=>`<div class="history-item"><div><strong>${esc(s.className)}</strong><p class="muted">${esc(s.course)} · ${time(s.created)} · ${s.ended?'已结束':'进行中'}</p></div><div class="row" style="flex-wrap:wrap;justify-content:flex-end"><button class="secondary small" data-enter="${s.id}">${s.ended?'查看记录':'进入课堂'}</button><button class="danger small" data-delete="${s.id}" ${s.ended?'':'disabled title="请先结束课堂，再删除记录"'}>删除</button></div></div>`).join(''):'<p>还没有课堂。填写课程、班级和讲次即可开始。</p>'}</section></div><aside><section class="card"><h2>按需同步，节省额度</h2><p>学生填姓名、学号后进入课堂。每讲预列 20 道题，听到开题后直接选项提交。等待期间不自动请求服务器。</p><p class="info">题目仍然展示在 PPT 中。这里负责收答案，时间一到服务器拒收。点击“收题并公布答案”，一次完成收题、公布和统计。</p></section><section class="card"><h2>使用固定二维码</h2><p>每次上课创建课堂，学生扫描同一个二维码，选择班级后逐题作答。</p><p class="muted">学生可以使用手机流量或 Wi-Fi，无需与你连接同一个网络。</p></section></aside></div>`;
   $('#refresh-list').onclick=startAction(teacherHome);
   $('#create').onsubmit=startAction(async e=>{
     const body=Object.fromEntries(new FormData(e.currentTarget));
@@ -68,6 +68,14 @@ async function teacherHome() {
     storage.set('classroom.course',body.course);
     await enterTeacher(result.session.id,data.addresses,result);
   });
+  document.querySelectorAll('[data-delete]').forEach(button=>button.onclick=startAction(async()=>{
+    const record=data.sessions.find(s=>s.id===Number(button.dataset.delete));
+    if(!record||!record.ended)return;
+    const label=record.className+' · '+record.course+' · '+new Date(record.created).toLocaleString('zh-CN');
+    if(!confirm('确定永久删除这堂课？\n\n'+label+'\n\n这堂课的学生名单、题目、答案和成绩将一起删除，无法恢复。需要保留成绩请先取消并导出。'))return;
+    await api('/api/teacher/sessions/'+record.id+'/delete',{});
+    await teacherHome();notify('课堂及其作答记录已删除。');
+  }));
   document.querySelectorAll('[data-enter]').forEach(b=>b.onclick=startAction(()=>enterTeacher(b.dataset.enter,data.addresses)));
 }
 async function enterTeacher(id, addresses, initial) {

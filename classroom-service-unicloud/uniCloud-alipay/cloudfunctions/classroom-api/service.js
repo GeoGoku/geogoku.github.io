@@ -119,6 +119,14 @@ function createService(db){
     const existing=(await col.doc(doc._id).get()).data[0];if(existing)fail('这个课堂已存在，未覆盖。',409);
     await col.add(doc);return {ok:true,id:doc.id,students:doc.studentCount,questions:b.questions.length,answers:b.answers.length};
   }
-  return {list,create,teacherState,control,join,enter,studentState,submit,export:exportCsv,importSession};
+  async function removeSession(id){
+    const s=await get(id,{...summaryFields});
+    if(s.ended===null)fail('请先结束本次课堂，再删除记录。',409);
+    // The class document contains its roster, questions and answers; remove them atomically.
+    const r=await col.where({_id:String(s.id),ended:s.ended}).remove();
+    if(r.deleted!==1)fail('课堂状态已变化，请刷新列表后重试。',409);
+    return {ok:true,deletedId:s.id};
+  }
+  return {list,create,teacherState,control,join,enter,studentState,submit,export:exportCsv,importSession,removeSession};
 }
 module.exports={createService};
