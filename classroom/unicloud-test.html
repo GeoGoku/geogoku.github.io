@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>课堂答题连接测试</title>
+  <style>
+    *{box-sizing:border-box}body{margin:0;background:#f2f6f8;color:#16323e;font:17px/1.65 system-ui,sans-serif}
+    main{max-width:520px;margin:35px auto;padding:26px;background:white;border-radius:18px}h1{font-size:26px;margin-top:0}
+    button{border:0;border-radius:10px;padding:13px 20px;font:inherit;cursor:pointer;background:#176356;color:white}
+    button:disabled{opacity:.55;cursor:wait}.choices{display:flex;gap:12px;margin:20px 0}.choices label{flex:1;border:1px solid #ccd8df;border-radius:10px;padding:14px;text-align:center}
+    #status{white-space:pre-wrap;background:#edf3f5;padding:16px;border-radius:10px;min-height:92px}small{color:#596c75}fieldset{border:0;padding:0;margin:0}
+    @media(max-width:560px){main{margin:16px;padding:20px}}
+  </style>
+</head>
+<body><main>
+  <h1>课堂答题连接测试</h1>
+  <p>请使用上课时的手机网络测试。这里不需要填写姓名，测试不计入成绩。</p>
+  <button id="connect">检查连接</button>
+  <form id="answer"><fieldset id="fields">
+    <div class="choices"><label><input type="radio" name="choice" value="A" required> A</label><label><input type="radio" name="choice" value="B"> B</label><label><input type="radio" name="choice" value="C"> C</label></div>
+    <button type="submit">提交测试答案</button>
+  </fieldset></form>
+  <p id="status" role="status" aria-live="polite">等待测试。</p>
+  <small>显示“保存并读回成功”才表示答题数据已到达云端。</small>
+</main>
+<script>
+const PROBE_BASE = 'https://env-00jy6twwtn5k.dev-hz.cloudbasefunction.cn/classroom-probe';
+const statusNode=document.getElementById('status');
+let busy=false;
+async function request(path,choice){
+  if(busy)return;
+  if(!PROBE_BASE){statusNode.textContent='测试服务尚未发布，请等待老师配置完成。';return;}
+  busy=true;document.getElementById('connect').disabled=true;document.getElementById('fields').disabled=true;
+  statusNode.textContent='正在连接，请稍候…';
+  const controller=new AbortController();const timer=setTimeout(()=>controller.abort(),12000);
+  try{
+    const options={method:choice?'POST':'GET',cache:'no-store',signal:controller.signal};
+    // 测试接口接受 JSON 文本；使用简单请求避免平台网关截获 OPTIONS。
+    if(choice){options.headers={'Content-Type':'text/plain;charset=UTF-8'};options.body=JSON.stringify({choice});}
+    const response=await fetch(PROBE_BASE+path,options);
+    const data=await response.json();
+    if(!response.ok||!data.ok)throw Error(data.error||'服务返回异常');
+    if(choice){if(!data.saved||data.choice!==choice)throw Error('保存确认不完整');statusNode.textContent='保存并读回成功！\n云端记录的答案：'+data.choice;}
+    else statusNode.textContent='连接成功。\n请再选 A、B 或 C，点击“提交测试答案”。';
+  }catch(error){statusNode.textContent='测试未通过：'+(error.name==='AbortError'?'连接超时。':error.message)+'\n请把这个结果告诉老师。';}
+  finally{clearTimeout(timer);busy=false;document.getElementById('connect').disabled=false;document.getElementById('fields').disabled=false;}
+}
+document.getElementById('connect').onclick=()=>request('/health');
+document.getElementById('answer').onsubmit=event=>{event.preventDefault();const choice=new FormData(event.currentTarget).get('choice');if(choice)request('/submit',choice);};
+</script>
+</body></html>
+
